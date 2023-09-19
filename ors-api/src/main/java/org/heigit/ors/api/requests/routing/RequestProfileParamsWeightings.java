@@ -51,7 +51,7 @@ public class RequestProfileParamsWeightings {
             factor: Multiplication factor range from 0 to 1. 0 is the green routing base factor without multiplying it by the manual factor and is already different from normal routing. 1 will prefer ways through green areas over a shorter route.""",
             extensions = {@Extension(name = "validWhen", properties = {
                     @ExtensionProperty(name = "ref", value = "profile"),
-                    @ExtensionProperty(name = "value", value = "foot-*")}
+                    @ExtensionProperty(name = "value", value = "cycling-*")}
             )}, example = "0.4")
     @JsonProperty(PARAM_GREEN_INDEX)
     private Float greenIndex;
