@@ -115,6 +115,8 @@ class APIEnumsTest {
         assertEquals("highways", APIEnums.AvoidFeatures.HIGHWAYS.toString());
         assertEquals("steps", APIEnums.AvoidFeatures.STEPS.toString());
         assertEquals("tollways", APIEnums.AvoidFeatures.TOLLWAYS.toString());
+        assertEquals("junction", APIEnums.AvoidFeatures.JUNCTION.toString());
+
     }
 
     @Test

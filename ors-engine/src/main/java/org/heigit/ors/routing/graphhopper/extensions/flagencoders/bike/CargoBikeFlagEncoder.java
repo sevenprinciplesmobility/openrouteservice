@@ -100,7 +100,7 @@ public class CargoBikeFlagEncoder extends CommonBikeFlagEncoder {
         avoidHighwayTags.add("primary_link");
         avoidHighwayTags.add("secondary");
         avoidHighwayTags.add("secondary_link");
-        avoidHighwayTags.add("junction");
+        avoidHighwayTags.add("junction"); // won't work, because "junction" is an independent tag
 
 
         blockByDefaultBarriers.add("kissing_gate");

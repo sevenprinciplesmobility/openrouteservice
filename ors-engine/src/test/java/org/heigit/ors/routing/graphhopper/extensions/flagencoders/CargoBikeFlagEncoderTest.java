@@ -15,7 +15,7 @@ public class CargoBikeFlagEncoderTest {
     private ReaderWay way;
 
     public CargoBikeFlagEncoderTest() {
-        EncodingManager encodingManager = EncodingManager.create(new ORSDefaultFlagEncoderFactory(), FlagEncoderNames.BIKE_ORS);
+        EncodingManager encodingManager = EncodingManager.create(new ORSDefaultFlagEncoderFactory(), FlagEncoderNames.BIKE_CARGO);
         flagEncoder = (CargoBikeFlagEncoder) encodingManager.getEncoder(FlagEncoderNames.BIKE_CARGO);
     }
 

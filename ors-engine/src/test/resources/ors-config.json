@@ -331,6 +331,19 @@
               }
             }
           },
+          "profile-bike-cargo": {
+            "profiles": "cycling-cargo",
+            "parameters": {
+              "encoder_options": "consider_elevation=false|turn_costs=true|block_fords=false",
+              "elevation": true,
+              "ext_storages": {
+                "WayCategory": {},
+                "WaySurfaceType": {},
+                "HillIndex": {},
+                "TrailDifficulty": {}
+              }
+            }
+          },
           "profile-walking": {
             "profiles": "foot-walking",
             "parameters": {
