@@ -12,10 +12,10 @@ services:
       args:
         ORS_CONFIG: ./ors-api/ors-config.yml
         #OSM_FILE: ./ors-api/germany-latest.osm.gz
-        OSM_FILE: ./ors-api/heidelberg.osm.gz
-        # OSM_FILE: ./ors-api/baden-wuerttemberg-latest.osm.gz
+        #OSM_FILE: ./ors-api/heidelberg.osm.gz
+        #OSM_FILE: ./ors-api/baden-wuerttemberg-latest.osm.gz
         #OSM_FILE: ./ors-api/dach-latest.osm.gz
-        #OSM_FILE: ./ors-api/src/test/files/heidelberg.osm.gz
+        OSM_FILE: ./ors-api/src/test/files/heidelberg.osm.gz
     volumes:
       - ./docker/graphs:/home/ors/ors-core/data/graphs
       - ./docker/elevation_cache:/home/ors/ors-core/data/elevation_cache
@@ -23,6 +23,7 @@ services:
       - ./docker/logs/tomcat:/home/ors/tomcat/logs
       - ./docker/conf:/home/ors/ors-conf
       - ./docker/data:/home/ors/ors-core/data
+      - ./ors-api/src/test/files/green_streets_hd.csv:/home/ors/ors-core/data/green_streets_hd.csv
       #- ./docker/dach-latest.osm.pbf:/home/ors/ors-core/data/osm_file.pbf
     environment:
       - BUILD_GRAPHS=True # Forces the container to rebuild the graphs, e.g. when PBF is changed

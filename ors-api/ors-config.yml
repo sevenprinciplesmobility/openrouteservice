@@ -32,6 +32,9 @@ ors:
          block_fords: false
        elevation: true
        ext_storages:
+         "GreenIndex":
+#          "filepath": "./src/test/files/green_streets_hd.csv"
+           "filepath": "/home/ors/ors-core/data/green_streets_hd.csv"
          WayCategory:
          WaySurfaceType:
          HillIndex:

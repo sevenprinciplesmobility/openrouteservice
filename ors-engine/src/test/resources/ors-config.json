@@ -352,7 +352,7 @@
               "interpolate_bridges_and_tunnels": false,
               "ext_storages": {
                 "GreenIndex": {
-                  "filepath": "./src/test/files/green_streets_hd.csv"
+                  "filepath": "/home/ors/ors-core/data/green_streets_hd.csv"
                 },
                 "NoiseIndex": {
                   "filepath": "./src/test/files/noise_data_hd.csv"
