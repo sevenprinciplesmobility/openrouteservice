@@ -17,48 +17,48 @@ import com.graphhopper.GraphHopper;
 import com.graphhopper.reader.ReaderWay;
 import com.graphhopper.storage.GraphExtension;
 import com.graphhopper.util.EdgeIteratorState;
-import org.heigit.ors.routing.graphhopper.extensions.TollwayType;
-import org.heigit.ors.routing.graphhopper.extensions.storages.TollwaysGraphStorage;
+import org.heigit.ors.routing.graphhopper.extensions.JunctionType;
+import org.heigit.ors.routing.graphhopper.extensions.storages.JunctionGraphStorage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-class TollwaysGraphStorageBuilder extends AbstractGraphStorageBuilder {
-    private TollwaysGraphStorage storage;
-    private int tollways;
-    private final List<String> tollTags = new ArrayList<>(6);
+public class JunctionGraphStorageBuilder extends AbstractGraphStorageBuilder {
+    private JunctionGraphStorage storage;
+    private int junction;
+    private final List<String> junctionTags = new ArrayList<>(6);
 
-    public TollwaysGraphStorageBuilder() {
-        // Currently consider only toll tags relevant to cars or hgvs:
-        tollTags.addAll(Arrays.asList("toll", "toll:hgv", "toll:N1", "toll:N2", "toll:N3", "toll:motorcar"));
+    public JunctionGraphStorageBuilder() {
+        // Eventually add more junction tags, e.g. "junction=roundabout"
+        junctionTags.addAll(Arrays.asList("junction"));
     }
 
     public GraphExtension init(GraphHopper graphhopper) throws Exception {
         if (storage != null)
             throw new Exception("GraphStorageBuilder has been already initialized.");
 
-        storage = new TollwaysGraphStorage();
+        storage = new JunctionGraphStorage();
 
         return storage;
     }
 
     public void processWay(ReaderWay way) {
-        tollways = TollwayType.NONE;
+        junction = JunctionType.NONE;
 
-        for (String key : tollTags) {
+        for (String key : junctionTags) {
             if (way.hasTag(key)) {
                 String value = way.getTag(key);
 
                 if (value != null) {
                     switch (key) {
-                        case "toll" -> setFlag(TollwayType.GENERAL, value);
-                        case "toll:hgv" -> setFlag(TollwayType.HGV, value);
-                        case "toll:N1" -> //currently not used in OSM
-                                setFlag(TollwayType.N1, value);
-                        case "toll:N2" -> setFlag(TollwayType.N2, value);
-                        case "toll:N3" -> setFlag(TollwayType.N3, value);
-                        case "toll:motorcar" -> setFlag(TollwayType.MOTORCAR, value);
+                        case "junction" -> setFlag(JunctionType.CYCLING_CARGO, value);
+                        // case "toll:hgv" -> setFlag(JunctionType.HGV, value);
+                        // case "toll:N1" -> //currently not used in OSM
+                        // setFlag(JunctionType.N1, value);
+                        // case "toll:N2" -> setFlag(JunctionType.N2, value);
+                        // case "toll:N3" -> setFlag(JunctionType.N3, value);
+                        // case "toll:motorcar" -> setFlag(JunctionType.MOTORCAR, value);
                         default -> {
                         }
                     }
@@ -70,19 +70,24 @@ class TollwaysGraphStorageBuilder extends AbstractGraphStorageBuilder {
 
     private void setFlag(int flag, String value) {
         switch (value) {
-            case "yes" -> tollways |= flag;
-            case "no" -> tollways &= ~flag;
+            case "yes" -> junction |= flag;
+            case "no" -> junction &= ~flag;
             default -> {
             }
         }
     }
 
     public void processEdge(ReaderWay way, EdgeIteratorState edge) {
-        storage.setEdgeValue(edge.getEdge(), tollways);
+        storage.setJunctionEdgeValue(edge.getEdge(), junction);
     }
 
     @Override
     public String getName() {
-        return "Tollways";
+        return "junction";
+    }
+
+    // Added getter method to access the junction attribute
+    public int getCurrentJunctionValue() {
+        return this.junction;
     }
 }

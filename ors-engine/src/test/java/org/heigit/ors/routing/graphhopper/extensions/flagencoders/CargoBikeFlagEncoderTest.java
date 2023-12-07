@@ -7,15 +7,21 @@ import org.heigit.ors.routing.graphhopper.extensions.flagencoders.bike.CargoBike
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CargoBikeFlagEncoderTest {
 
+    protected final Set<String> preferHighwayTags = new HashSet<>();
     private final CargoBikeFlagEncoder flagEncoder;
     private ReaderWay way;
 
+
+
     public CargoBikeFlagEncoderTest() {
-        EncodingManager encodingManager = EncodingManager.create(new ORSDefaultFlagEncoderFactory(), FlagEncoderNames.BIKE_ORS);
+        EncodingManager encodingManager = EncodingManager.create(new ORSDefaultFlagEncoderFactory(), FlagEncoderNames.BIKE_CARGO);
         flagEncoder = (CargoBikeFlagEncoder) encodingManager.getEncoder(FlagEncoderNames.BIKE_CARGO);
     }
 
@@ -34,5 +40,15 @@ public class CargoBikeFlagEncoderTest {
 
         way.setTag("bicycle", "no");
         assertTrue(flagEncoder.getAccess(way).canSkip());
+    }
+
+    @Test
+    void checkTagAvailability() {
+        way.setTag("cycleway", "lane");
+        assertTrue(flagEncoder.getAccess(way).isWay());
+
+        preferHighwayTags.add("cycleway");
+        preferHighwayTags.contains("cycleway");
+        assertTrue(preferHighwayTags.contains("cycleway"));
     }
 }

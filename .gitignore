@@ -22,3 +22,4 @@ ors-api/src/main/resources/ors-config*
 
 envs/
 ors-config-repo/
+ors-api/src/test/files/switzerland-latest.osm.pbf

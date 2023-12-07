@@ -1,11 +1,11 @@
 version: '2.4'
 services:
   ors-app:
-    container_name: ors-app
+    container_name: mod-ors
     ports:
       - "8080:8080"
       - "9001:9001"
-    image: openrouteservice/openrouteservice:latest
+    image: mod-ors
     user: "${UID:-0}:${GID:-0}"
     build:
       context: ./
@@ -13,9 +13,9 @@ services:
         ORS_CONFIG: ./ors-api/ors-config.yml
         #OSM_FILE: ./ors-api/germany-latest.osm.gz
         #OSM_FILE: ./ors-api/heidelberg.osm.gz
-        OSM_FILE: ./ors-api/baden-wuerttemberg-latest.osm.gz
+        #OSM_FILE: ./ors-api/baden-wuerttemberg-latest.osm.gz
         #OSM_FILE: ./ors-api/dach-latest.osm.gz
-        #OSM_FILE: ./ors-api/src/test/files/heidelberg.osm.gz
+        OSM_FILE: /home/ors/ors-core/data/osm_file.pbf
     volumes:
       - ./docker/graphs:/home/ors/ors-core/data/graphs
       - ./docker/elevation_cache:/home/ors/ors-core/data/elevation_cache
@@ -23,8 +23,9 @@ services:
       - ./docker/logs/tomcat:/home/ors/tomcat/logs
       - ./docker/conf:/home/ors/ors-conf
       - ./docker/data:/home/ors/ors-core/data
-      #- ./docker/dach-latest.osm.pbf:/home/ors/ors-core/data/osm_file.pbf
+      - ./ors-api/src/test/files/green_streets_hd.csv:/home/ors/ors-core/data/green_streets_hd.csv
+      - ./ors-api/src/test/files/switzerland-latest.osm.pbf:/home/ors/ors-core/data/osm_file.pbf
     environment:
       - BUILD_GRAPHS=True # Forces the container to rebuild the graphs, e.g. when PBF is changed
-      - "JAVA_OPTS=-Djava.awt.headless=true -server -XX:TargetSurvivorRatio=75 -XX:SurvivorRatio=64 -XX:MaxTenuringThreshold=3 -XX:+UseG1GC -XX:+ScavengeBeforeFullGC -XX:ParallelGCThreads=500 -Xms8g -Xmx14g"
+      - "JAVA_OPTS=-Djava.awt.headless=true -server -XX:TargetSurvivorRatio=75 -XX:SurvivorRatio=64 -XX:MaxTenuringThreshold=3 -XX:+UseG1GC -XX:+ScavengeBeforeFullGC -XX:ParallelGCThreads=500 -Xms1g -Xmx2g"
       - "CATALINA_OPTS=-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9001 -Dcom.sun.management.jmxremote.rmi.port=9001 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=localhost"

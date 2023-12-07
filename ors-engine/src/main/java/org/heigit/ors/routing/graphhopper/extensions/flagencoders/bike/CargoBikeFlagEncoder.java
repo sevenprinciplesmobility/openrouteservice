@@ -34,6 +34,9 @@ public class CargoBikeFlagEncoder extends CommonBikeFlagEncoder {
         preferHighwayTags.add("tertiary_link");
         preferHighwayTags.add("residential");
         preferHighwayTags.add("unclassified");
+        preferHighwayTags.add("cycleway"); // highway=cycleway tag indicates a separate way for the use of cyclists
+
+        // preferTags.add("cycleway"); // same tag, different HashSet | change does *not* show any change in generated routes
 
         setTrackTypeSpeed("grade1", 21); // paved
         setTrackTypeSpeed("grade2", 15); // now unpaved ...
@@ -100,7 +103,7 @@ public class CargoBikeFlagEncoder extends CommonBikeFlagEncoder {
         avoidHighwayTags.add("primary_link");
         avoidHighwayTags.add("secondary");
         avoidHighwayTags.add("secondary_link");
-        avoidHighwayTags.add("junction");
+        avoidHighwayTags.add("junction"); // won't work, because "junction" is an independent tag
 
 
         blockByDefaultBarriers.add("kissing_gate");
