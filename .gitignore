@@ -22,4 +22,6 @@ ors-api/src/main/resources/ors-config*
 
 envs/
 ors-config-repo/
-ors-api/src/test/files/switzerland-latest.osm.pbf
+
+# Added by Jan
+ors-api/dach-latest.osm.pbf
