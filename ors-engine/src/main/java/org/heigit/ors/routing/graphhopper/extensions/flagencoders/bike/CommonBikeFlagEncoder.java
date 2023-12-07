@@ -680,7 +680,7 @@ public abstract class CommonBikeFlagEncoder extends BikeCommonFlagEncoder {
         }
 
         if (preferHighwayTags.contains(cycleway)) {
-            if ((way.hasTag(KEY_CYCLEWAY) || way.hasTag("highway", "cycleway")) && ((way.hasTag("highway", "residential") || way.hasTag("highway", "living_street")))) {
+            if ((way.hasTag(KEY_CYCLEWAY) || way.hasTag("highway", "cycleway")) && ((way.hasTag("highway", "residential") || way.hasTag("highway", "living_street")))) {
                 weightToPrioMap.put(100d, VERY_NICE.getValue());
             }
 
