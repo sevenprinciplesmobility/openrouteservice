@@ -156,7 +156,6 @@ class RoutingServiceTest {
 
         options.setProfileParams(params);
         request.setRouteOptions(options);
-
     }
 
     @Test
