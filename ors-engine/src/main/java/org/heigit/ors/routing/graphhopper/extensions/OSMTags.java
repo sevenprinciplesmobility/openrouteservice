@@ -30,7 +30,7 @@ public class OSMTags {
         public static final String SAC_SCALE = "sac_scale";
         public static final String FORD = "ford";
         public static final String MOTOR_ROAD = "motorroad";
-        public static final String JUNCTION = "junction"; // just added
+        public static final String JUNCTION = "junction";
         public static final String RAILWAY = "railway";
         public static final String MAN_MADE = "man_made";
         public static final String CYCLEWAY = "cycleway"; // just added
