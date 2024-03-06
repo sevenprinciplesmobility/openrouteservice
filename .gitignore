@@ -22,6 +22,3 @@ ors-api/src/main/resources/ors-config*
 
 envs/
 ors-config-repo/
-
-# Added by Jan
-ors-api/dach-latest.osm.pbf
