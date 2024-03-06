@@ -36,7 +36,6 @@ public class AvoidFeaturesEdgeFilter implements EdgeFilter {
 
     private static final int NOT_TOLLWAYS = ~AvoidFeatureFlags.TOLLWAYS;
 
-
     public AvoidFeaturesEdgeFilter(int profileType, RouteSearchParameters searchParams, GraphHopperStorage graphStorage) throws Exception {
         this.buffer = new byte[10];
 

@@ -29,7 +29,6 @@ import com.graphhopper.util.Helper;
 import com.graphhopper.util.PMap;
 import com.graphhopper.util.Translation;
 import org.apache.log4j.Logger;
-import org.heigit.ors.routing.graphhopper.extensions.OSMTags;
 import org.heigit.ors.routing.graphhopper.extensions.util.PriorityCode;
 
 import java.io.File;
@@ -77,8 +76,6 @@ public abstract class CommonBikeFlagEncoder extends BikeCommonFlagEncoder {
     protected final HashSet<String> pushingSectionsHighways = new HashSet<>();
     protected final HashSet<String> oppositeLanes = new HashSet<>();
     protected final Set<String> preferHighwayTags = new HashSet<>();
-
-    protected final Set<String> preferTags = new HashSet<>();
     protected final Set<String> avoidHighwayTags = new HashSet<>();
     protected final Set<String> unpavedSurfaceTags = new HashSet<>();
     private final Map<String, SpeedValue> trackTypeSpeeds = new HashMap<>();
@@ -315,10 +312,6 @@ public abstract class CommonBikeFlagEncoder extends BikeCommonFlagEncoder {
                 acceptPotentially = EncodingManager.Access.WAY;
             }
 
-            if (way.hasTag(OSMTags.Keys.CYCLEWAY)) {
-                return EncodingManager.Access.WAY; // just added
-            }
-
             if (way.hasTag("man_made", "pier")) {
                 acceptPotentially = EncodingManager.Access.WAY;
             }
@@ -419,7 +412,7 @@ public abstract class CommonBikeFlagEncoder extends BikeCommonFlagEncoder {
             handleBikeRelated(edgeFlags, way, priorityFromRelation > UNCHANGED.getValue());
             if (access.isConditional() && conditionalAccessEncoder != null)
                 conditionalAccessEncoder.setBool(false, edgeFlags, true);
-            boolean isRoundabout = way.hasTag(KEY_JUNCTION, "roundabout") || way.hasTag(KEY_JUNCTION, "circular"); // just added
+            boolean isRoundabout = way.hasTag(KEY_JUNCTION, "roundabout") || way.hasTag(KEY_JUNCTION, "circular");
             if (isRoundabout) {
                 roundaboutEnc.setBool(false, edgeFlags, true);
             }
@@ -640,12 +633,11 @@ public abstract class CommonBikeFlagEncoder extends BikeCommonFlagEncoder {
     void collect(ReaderWay way, double wayTypeSpeed, TreeMap<Double, Integer> weightToPrioMap) {
         String service = way.getTag(KEY_SERVICE);
         String highway = way.getTag(KEY_HIGHWAY);
-        String cycleway = way.getTag(KEY_CYCLEWAY); // just added
         // MARQ24 MOD START
         if (!isRoadBikeEncoder) {
             // MARQ24 MOD END
             // MARQ24 MOD START
-            if (way.hasTag(KEY_BICYCLE, KEY_DESIGNATED) || way.hasTag(KEY_BICYCLE, KEY_OFFICIAL) || way.hasTag(KEY_BICYCLE_ROAD, "yes")) { // just added
+            if (way.hasTag(KEY_BICYCLE, KEY_DESIGNATED) || way.hasTag(KEY_BICYCLE, KEY_OFFICIAL) || way.hasTag(KEY_BICYCLE_ROAD, "yes")) {
                 // MARQ24 MOD END
                 if ("path".equals(highway)) {
                     weightToPrioMap.put(100d, VERY_NICE.getValue());
@@ -677,13 +669,6 @@ public abstract class CommonBikeFlagEncoder extends BikeCommonFlagEncoder {
             if (way.hasTag("tunnel", intendedValues)) {
                 weightToPrioMap.put(50d, AVOID_AT_ALL_COSTS.getValue());
             }
-        }
-
-        if (preferHighwayTags.contains(cycleway)) {
-            if ((way.hasTag(KEY_CYCLEWAY) || way.hasTag("highway", "cycleway")) && ((way.hasTag("highway", "residential") || way.hasTag("highway", "living_street")))) {
-                weightToPrioMap.put(100d, VERY_NICE.getValue());
-            }
-
         }
 
         if (pushingSectionsHighways.contains(highway)

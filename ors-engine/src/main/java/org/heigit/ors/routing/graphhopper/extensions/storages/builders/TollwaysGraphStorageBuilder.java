@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-class TollwaysGraphStorageBuilder extends AbstractGraphStorageBuilder {
+public class TollwaysGraphStorageBuilder extends AbstractGraphStorageBuilder {
     private TollwaysGraphStorage storage;
     private int tollways;
     private final List<String> tollTags = new ArrayList<>(6);
