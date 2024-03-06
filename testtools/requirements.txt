@@ -1,6 +1,0 @@
-pandas==1.5.2
-coordinates==0.4.0
-openrouteservice==2.3.3
-routingpy==1.2.0
-numpy==1.25.2
-folium==0.14.0
