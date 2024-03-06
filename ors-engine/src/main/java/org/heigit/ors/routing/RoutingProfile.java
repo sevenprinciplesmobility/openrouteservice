@@ -386,7 +386,7 @@ public class RoutingProfile {
         }
 
         if (config.getOptimize() && !prepareCH)
-            ghConfig.putObject("graph.do_sort", false);
+            ghConfig.putObject("graph.do_sort", true);
 
         if (!config.getGtfsFile().isEmpty())
             ghConfig.putObject("gtfs.file", config.getGtfsFile());
