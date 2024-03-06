@@ -226,8 +226,6 @@ class RoutingServiceTest {
         assertEquals(new VehicleLoadCharacteristicsFlags().getFromString("hazmat"), params.getLoadCharacteristics());
     }
 
-
-
     @Test
     void TestWheelchairParameters() throws Exception {
         request.setProfile(APIEnums.Profile.WHEELCHAIR);
