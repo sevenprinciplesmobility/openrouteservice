@@ -38,6 +38,3 @@ docs/
 Dockerfile
 envs/
 .jqwik-database
-
-# Added by Jan
-!./ors-api/dach-latest.osm.pbf
