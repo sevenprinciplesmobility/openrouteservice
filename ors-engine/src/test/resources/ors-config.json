@@ -106,6 +106,7 @@
             "maximum_avoid_polygon_extent": 20000,
             "preparation": {
               "min_network_size": 200,
+              "min_one_way_network_size": 200,
               "methods": {
                 "lm": {
                   "enabled": true,
@@ -131,6 +132,7 @@
               "elevation": true,
               "preparation": {
                 "min_network_size": 200,
+                "min_one_way_network_size": 200,
                 "methods": {
                   "ch": {
                     "enabled": true,
@@ -157,6 +159,7 @@
                     "active_landmarks": 8
                   },
                   "core": {
+                    "disabling_allowed": true,
                     "active_landmarks": 6
                   }
                 }
@@ -198,6 +201,7 @@
               "maximum_speed_lower_bound": 75,
               "preparation": {
                 "min_network_size": 200,
+                "min_one_way_network_size": 200,
                 "methods": {
                   "ch": {
                     "enabled": true,
@@ -224,6 +228,7 @@
                     "active_landmarks": 8
                   },
                   "core": {
+                    "disabling_allowed": true,
                     "active_landmarks": 6
                   }
                 }
@@ -260,6 +265,7 @@
               "elevation": true,
               "preparation": {
                 "min_network_size": 200,
+                "min_one_way_network_size": 200,
                 "methods": {
                   "core": {
                     "enabled": true,
@@ -272,6 +278,7 @@
               "execution": {
                 "methods": {
                   "core": {
+                    "disabling_allowed": true,
                     "active_landmarks": 6
                   }
                 }
