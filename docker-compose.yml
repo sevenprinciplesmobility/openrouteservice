@@ -1,21 +1,17 @@
 version: '2.4'
 services:
   ors-app:
-    container_name: mod-ors
+    container_name: ors-app
     ports:
       - "8080:8080"
       - "9001:9001"
-    image: mod-ors
+    image: openrouteservice/openrouteservice:nightly
+    # For versioned images see https://giscience.github.io/openrouteservice/run-instance/installation/running-with-docker
     user: "${UID:-0}:${GID:-0}"
-    build:
-      context: ./
-      args:
-        ORS_CONFIG: ./ors-api/ors-config.yml
-        #OSM_FILE: ./ors-api/germany-latest.osm.gz
-        #OSM_FILE: ./ors-api/heidelberg.osm.gz
-        #OSM_FILE: ./ors-api/baden-wuerttemberg-latest.osm.gz
-        OSM_FILE: ors-api/dach-latest.osm.pbf
-        #OSM_FILE: ./ors-api/src/test/files/heidelberg.osm.gz
+#    build:
+#      context: ./
+#      args:
+#        OSM_FILE: ./ors-api/src/test/files/heidelberg.osm.gz
     volumes:
       - ./docker/graphs:/home/ors/ors-core/data/graphs
       - ./docker/elevation_cache:/home/ors/ors-core/data/elevation_cache
@@ -23,9 +19,8 @@ services:
       - ./docker/logs/tomcat:/home/ors/tomcat/logs
       - ./docker/conf:/home/ors/ors-conf
       - ./docker/data:/home/ors/ors-core/data
-      - ./ors-api/src/test/files/green_streets_hd.csv:/home/ors/ors-core/data/green_streets_hd.csv
-      #- ./docker/dach-latest.osm.pbf:/home/ors/ors-core/data/osm_file.pbf
     environment:
-      - BUILD_GRAPHS=False # Forces the container to rebuild the graphs, e.g. when PBF is changed
-      - "JAVA_OPTS=-Djava.awt.headless=true -server -XX:TargetSurvivorRatio=75 -XX:SurvivorRatio=64 -XX:MaxTenuringThreshold=3 -XX:+UseG1GC -XX:+ScavengeBeforeFullGC -XX:ParallelGCThreads=500 -Xms12g -Xmx12g"
+      - BUILD_GRAPHS=False  # Forces the container to rebuild the graphs, e.g. when PBF is changed
+      - "JAVA_OPTS=-Djava.awt.headless=true -server -XX:TargetSurvivorRatio=75 -XX:SurvivorRatio=64 -XX:MaxTenuringThreshold=3 -XX:+UseG1GC -XX:+ScavengeBeforeFullGC -XX:ParallelGCThreads=4 -Xms1g -Xmx2g"
       - "CATALINA_OPTS=-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9001 -Dcom.sun.management.jmxremote.rmi.port=9001 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=localhost"
+      - ORS_CONFIG=/home/ors/ors-conf/ors-config.json
