@@ -124,7 +124,6 @@ class RoutingServiceTest {
         options.setAvoidBorders(APIEnums.AvoidBorders.CONTROLLED);
         options.setAvoidCountries(new String[]{"115"});
         options.setAvoidFeatures(new APIEnums.AvoidFeatures[]{APIEnums.AvoidFeatures.FORDS});
-        //options.setAvoidFeatures(new APIEnums.AvoidFeatures[]{APIEnums.AvoidFeatures.JUNCTION});
 
         options.setAvoidPolygonFeatures(geoJsonPolygon);
 
