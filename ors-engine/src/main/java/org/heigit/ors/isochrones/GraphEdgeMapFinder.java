@@ -16,11 +16,11 @@ package org.heigit.ors.isochrones;
 import com.carrotsearch.hppc.IntObjectMap;
 import com.graphhopper.GraphHopper;
 import com.graphhopper.routing.SPTEntry;
+import com.graphhopper.routing.ev.Subnetwork;
 import com.graphhopper.routing.querygraph.QueryGraph;
-import com.graphhopper.routing.util.EdgeFilter;
-import com.graphhopper.routing.util.FlagEncoder;
-import com.graphhopper.routing.util.TraversalMode;
+import com.graphhopper.routing.util.*;
 import com.graphhopper.routing.weighting.FastestWeighting;
+import com.graphhopper.routing.weighting.ShortestWeighting;
 import com.graphhopper.routing.weighting.Weighting;
 import com.graphhopper.storage.GraphHopperStorage;
 import com.graphhopper.storage.index.Snap;
@@ -32,8 +32,9 @@ import org.heigit.ors.routing.algorithms.DijkstraCostCondition;
 import org.heigit.ors.routing.algorithms.TDDijkstraCostCondition;
 import org.heigit.ors.routing.graphhopper.extensions.AccessibilityMap;
 import org.heigit.ors.routing.graphhopper.extensions.ORSEdgeFilterFactory;
-import org.heigit.ors.routing.graphhopper.extensions.weighting.DistanceWeighting;
+import org.heigit.ors.routing.graphhopper.extensions.ORSWeightingFactory;
 import org.heigit.ors.routing.traffic.TrafficSpeedCalculator;
+import org.heigit.ors.util.ProfileTools;
 import org.locationtech.jts.geom.Coordinate;
 
 import java.time.ZonedDateTime;
@@ -48,9 +49,12 @@ public class GraphEdgeMapFinder {
         GraphHopper gh = searchCntx.getGraphHopper();
         FlagEncoder encoder = searchCntx.getEncoder();
         GraphHopperStorage graph = gh.getGraphHopperStorage();
-
+        EncodingManager encodingManager = gh.getEncodingManager();
+        Weighting weighting = new ORSWeightingFactory(graph, encodingManager).createIsochroneWeighting(searchCntx, parameters.getRangeType());
+        String profileName = ProfileTools.makeProfileName(encoder.toString(), weighting.getName(), false);
+        EdgeFilter defaultSnapFilter = new DefaultSnapFilter(weighting, encodingManager.getBooleanEncodedValue(Subnetwork.key(profileName)));
         ORSEdgeFilterFactory edgeFilterFactory = new ORSEdgeFilterFactory();
-        EdgeFilter edgeFilter = edgeFilterFactory.createEdgeFilter(searchCntx.getProperties(), encoder, graph);
+        EdgeFilter edgeFilter = edgeFilterFactory.createEdgeFilter(searchCntx.getProperties(), encoder, graph, defaultSnapFilter);
 
         Coordinate loc = parameters.getLocation();
         Snap res = gh.getLocationIndex().findClosest(loc.y, loc.x, edgeFilter);
@@ -64,7 +68,6 @@ public class GraphEdgeMapFinder {
 
         if (fromId == -1)
             throw new InternalServerException(IsochronesErrorCodes.UNKNOWN, "The closest node is null.");
-        Weighting weighting = createWeighting(parameters, encoder);
 
         if (parameters.isTimeDependent()) {
             return calculateTimeDependentAccessibilityMap(parameters, encoder, graph, edgeFilter, queryGraph, snappedPosition, fromId, weighting);
@@ -110,10 +113,5 @@ public class GraphEdgeMapFinder {
         tdDijkstraCostCondition.calcPath(fromId, toId, zdt.toInstant().toEpochMilli());
         IntObjectMap<SPTEntry> edgeMap = tdDijkstraCostCondition.getMap();
         return new AccessibilityMap(edgeMap, tdDijkstraCostCondition.getCurrentEdge(), snappedPosition);
-    }
-
-    private static Weighting createWeighting(IsochroneSearchParameters parameters, FlagEncoder encoder) {
-        return parameters.getRangeType() == TravelRangeType.TIME ? new FastestWeighting(encoder)
-                : new DistanceWeighting(encoder);
     }
 }

@@ -1,4 +1,4 @@
-# Image is reused in the workflow builds for master and the latest version
+# Image is reused in the workflow builds for main and the latest version
 FROM maven:3.8-openjdk-17-slim as base
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -41,8 +41,10 @@ WORKDIR /ors-core
 COPY ors-api /ors-core/ors-api
 COPY ors-engine /ors-core/ors-engine
 COPY pom.xml /ors-core/pom.xml
+COPY ors-report-aggregation /ors-core/ors-report-aggregation
 
-RUN mvn package -DskipTests
+# Build the project and ignore the report aggregation module as not needed for the API build war
+RUN mvn package -DskipTests -P buildWar
 
 # build final image, just copying stuff inside
 FROM amazoncorretto:17.0.7-alpine3.17 as publish
@@ -73,12 +75,20 @@ WORKDIR ${BASE_FOLDER}
 # Copy over the needed bits and pieces from the other stages.
 COPY --chown=ors:ors --from=tomcat /tmp/tomcat ${BASE_FOLDER}/tomcat
 COPY --chown=ors:ors --from=build /ors-core/ors-api/target/ors.war ${BASE_FOLDER}/tomcat/webapps/ors.war
-COPY --chown=ors:ors --from=build /ors-core/ors-api/src/main/resources/log4j.properties ${BASE_FOLDER}/tomcat/conf/logging.properties
 COPY --chown=ors:ors ./docker-entrypoint.sh ${BASE_FOLDER}/docker-entrypoint.sh
-COPY --chown=ors:ors ./ors-api/ors-config.yml ${BASE_FOLDER}/tmp/ors-config.yml
+COPY --chown=ors:ors ./ors-config.yml ${BASE_FOLDER}/tmp/ors-config.yml
 COPY --chown=ors:ors ./$OSM_FILE ${BASE_FOLDER}/tmp/osm_file.pbf
 
 USER ${UID}:${GID}
+
+# Rewrite the '    source_file:  ors-api/src/test/files/heidelberg.osm.gz' line in the config file to '    source_file:  ${BASE_FOLDER}/ors-core/data/osm_file.pbf'
+RUN sed -i "s|    source_file:  ors-api/src/test/files/heidelberg.osm.gz|    source_file:  ${BASE_FOLDER}/ors-core/data/osm_file.pbf|g" ${BASE_FOLDER}/tmp/ors-config.yml
+# Rewrite the '#    graphs_root_path: ./graphs' line in the config file to '    graphs_root_path: ${BASE_FOLDER}/ors-core/data/graphs'
+RUN sed -i "s|#    graphs_root_path: ./graphs|    graphs_root_path: ${BASE_FOLDER}/ors-core/data/graphs|g" ${BASE_FOLDER}/tmp/ors-config.yml
+# Rewrite the '#    elevation:' line in the config file to '    elevation:'
+RUN sed -i "s|#    elevation:|    elevation:|g" ${BASE_FOLDER}/tmp/ors-config.yml
+# Rewrite the '#      cache_path: ./elevation_cache' line in the config file to '      cache_path: ${BASE_FOLDER}/ors-core/data/elevation_cache'
+RUN sed -i "s|#      cache_path: ./elevation_cache|      cache_path: ${BASE_FOLDER}/ors-core/data/elevation_cache|g" ${BASE_FOLDER}/tmp/ors-config.yml
 
 ENV BUILD_GRAPHS="False"
 ENV ORS_CONFIG_LOCATION=ors-conf/ors-config.yml

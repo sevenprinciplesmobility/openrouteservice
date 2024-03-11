@@ -67,10 +67,12 @@ public class StatusAPI {
                 List<String> list = new ArrayList<>(4);
                 if (endpointsProperties.getRouting().isEnabled())
                     list.add("routing");
-                if (endpointsProperties.getIsochrone().isEnabled())
+                if (endpointsProperties.getIsochrones().isEnabled())
                     list.add("isochrones");
                 if (endpointsProperties.getMatrix().isEnabled())
                     list.add("matrix");
+                if (endpointsProperties.getSnap().isEnabled())
+                    list.add("snap");
                 jInfo.put("services", list);
                 jInfo.put("languages", LocalizationManager.getInstance().getLanguages());
 

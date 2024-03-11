@@ -17,10 +17,12 @@ import java.util.Map;
 @Configuration
 @ConfigurationProperties(prefix = "ors.engine")
 public class EngineProperties {
+
     private int initThreads;
     private boolean preparationMode;
     private String sourceFile;
     private String graphsRootPath;
+    private String graphsDataAccess;
     private ElevationProperties elevation;
     private ProfileProperties profileDefault;
     private Map<String, ProfileProperties> profiles;
@@ -57,6 +59,14 @@ public class EngineProperties {
         this.graphsRootPath = graphsRootPath;
     }
 
+    public String getGraphsDataAccess() {
+        return graphsDataAccess;
+    }
+
+    public void setGraphsDataAccess(String graphsDataAccess) {
+        this.graphsDataAccess = graphsDataAccess;
+    }
+
     public ElevationProperties getElevation() {
         return elevation;
     }
@@ -86,6 +96,9 @@ public class EngineProperties {
         if (profiles != null) {
             for (Map.Entry<String, ProfileProperties> profileEntry : profiles.entrySet()) {
                 ProfileProperties profile = profileEntry.getValue();
+                if (!profile.isEnabled()) {
+                    continue;
+                }
                 RouteProfileConfiguration convertedProfile = new RouteProfileConfiguration();
                 convertedProfile.setName(profileEntry.getKey());
                 convertedProfile.setEnabled(profile.enabled != null ? profile.enabled : profileDefault.isEnabled());
@@ -127,8 +140,9 @@ public class EngineProperties {
                 Map<String, Object> preparation = profile.preparation != null ? profile.preparation : profileDefault.getPreparation();
                 if (preparation != null) {
                     convertedProfile.setPreparationOpts(ConfigFactory.parseMap(preparation));
-                    if (preparation.containsKey("methods") && preparation.get("methods") != null && ((Map<String, Object>) preparation.get("methods")).containsKey("fastisochrones")) {
-                        convertedProfile.setIsochronePreparationOpts(ConfigFactory.parseMap((Map<String, Object>) ((Map<String, Object>) preparation.get("methods")).get("fastisochrones")));
+                    String methodsKey = "methods";
+                    if (preparation.containsKey(methodsKey) && preparation.get(methodsKey) != null && ((Map<String, Object>) preparation.get(methodsKey)).containsKey("fastisochrones")) {
+                        convertedProfile.setIsochronePreparationOpts(ConfigFactory.parseMap((Map<String, Object>) ((Map<String, Object>) preparation.get(methodsKey)).get("fastisochrones")));
                     }
                 }
                 Map<String, Object> execution = profile.execution != null ? profile.execution : profileDefault.getExecution();
@@ -207,7 +221,8 @@ public class EngineProperties {
         private Boolean optimize;
         private String graphPath;
         private Map<String, String> encoderOptions;
-        //        For later use when refactoring RoutingManagerConfiguration
+
+        //TODO: For later use when refactoring RoutingManagerConfiguration
 //        private PreparationProperties preparation;
 //        private ExecutionProperties execution;
         private Map<String, Object> preparation;
@@ -305,11 +320,11 @@ public class EngineProperties {
         }
 
         public String getEncoderOptionsString() {
-            if (encoderOptions == null || encoderOptions.size() == 0)
+            if (encoderOptions == null || encoderOptions.isEmpty())
                 return "";
             StringBuilder output = new StringBuilder();
             for (Map.Entry<String, String> entry : encoderOptions.entrySet()) {
-                if (output.length() > 0) {
+                if (!output.isEmpty()) {
                     output.append("|");
                 }
                 output.append(entry.getKey()).append("=").append(entry.getValue());

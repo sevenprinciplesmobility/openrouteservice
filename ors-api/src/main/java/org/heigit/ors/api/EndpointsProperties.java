@@ -16,8 +16,8 @@ public class EndpointsProperties {
     private EndpointDefaultProperties defaults;
     private EndpointRoutingProperties routing;
     private EndpointMatrixProperties matrix;
-    private EndpointIsochroneProperties isochrone;
-
+    private EndpointIsochronesProperties isochrones;
+    private EndpointSnapProperties snap;
     private String swaggerDocumentationUrl;
 
     public void setSwaggerDocumentationUrl(String swaggerDocumentationUrl) {
@@ -52,12 +52,20 @@ public class EndpointsProperties {
         this.matrix = matrix;
     }
 
-    public EndpointIsochroneProperties getIsochrone() {
-        return isochrone;
+    public EndpointIsochronesProperties getIsochrones() {
+        return isochrones;
     }
 
-    public void setIsochrone(EndpointIsochroneProperties isochrone) {
-        this.isochrone = isochrone;
+    public void setIsochrones(EndpointIsochronesProperties isochrones) {
+        this.isochrones = isochrones;
+    }
+
+    public EndpointSnapProperties getSnap() {
+        return snap;
+    }
+
+    public void setSnap(EndpointSnapProperties snap) {
+        this.snap = snap;
     }
 
     public static class EndpointDefaultProperties {
@@ -320,7 +328,7 @@ public class EndpointsProperties {
         }
     }
 
-    public static class EndpointIsochroneProperties extends MaximumRangeProperties {
+    public static class EndpointIsochronesProperties extends MaximumRangeProperties {
         private boolean enabled;
         private String attribution;
         private int maximumLocations;
@@ -432,5 +440,27 @@ public class EndpointsProperties {
                 this.attribution = attribution;
             }
         }
+    }
+
+    public static class EndpointSnapProperties {
+        private boolean enabled;
+        private String attribution;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public String getAttribution() {
+            return attribution;
+        }
+
+        public void setAttribution(String attribution) {
+            this.attribution = attribution;
+        }
+
     }
 }

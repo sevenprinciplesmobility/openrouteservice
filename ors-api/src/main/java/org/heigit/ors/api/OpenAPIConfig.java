@@ -30,6 +30,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.heigit.ors.api.util.AppInfo.VERSION;
 
@@ -94,13 +95,14 @@ public class OpenAPIConfig {
                 .description("This is the openrouteservice API documentation for ORS Core-Version " + VERSION + ". Documentations for [older Core-Versions](https://github.com/GIScience/openrouteservice-docs/releases) can be rendered with the [Swagger-Editor](https://editor-next.swagger.io/).")
                 .version("v2")
                 .contact(apiContact())
-                .license(apiLicence());
+                .license(apiLicence())
+                .extensions(Map.of("x-ors-version", VERSION));
     }
 
     private License apiLicence() {
         return new License()
                 .name("GNU General Public License v3.0")
-                .url("https://github.com/GIScience/openrouteservice/blob/master/LICENSE");
+                .url("https://github.com/GIScience/openrouteservice/blob/main/LICENSE");
     }
 
     private Contact apiContact() {

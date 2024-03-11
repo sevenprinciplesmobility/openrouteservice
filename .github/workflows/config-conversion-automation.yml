@@ -1,0 +1,29 @@
+name: Automatic synchronization of application.yml to ors-config.yml
+on:
+  pull_request:
+    branches:
+      - main
+      - releases/**
+    types: [ opened, ready_for_review, reopened, synchronize ]
+    paths:
+      - 'ors-api/src/main/resources/application.yml'
+
+jobs:
+  sync_config:
+    name: Synchronize changes in application.yml to ors-config.yml
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    if: (! github.event.pull_request.draft) && github.event.pull_request.state == 'open'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+      - name: Convert application.yml to ors-config.yml
+        run: |
+          .github/utils/config_conversion.sh ors-api/src/main/resources/application.yml ors-config.yml
+      - uses: MichaelsJP/git-auto-commit-action@v5
+        with:
+          commit_message: 'chore(config): automatic conversion of application.yml to ors-config.yml'
+

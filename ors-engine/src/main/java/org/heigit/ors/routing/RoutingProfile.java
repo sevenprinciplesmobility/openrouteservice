@@ -13,6 +13,7 @@
  */
 package org.heigit.ors.routing;
 
+import com.google.common.base.Strings;
 import com.graphhopper.GHRequest;
 import com.graphhopper.GHResponse;
 import com.graphhopper.GraphHopper;
@@ -112,7 +113,8 @@ public class RoutingProfile {
 
     public static ORSGraphHopper initGraphHopper(EngineConfig engineConfig, RouteProfileConfiguration config, RoutingProfileLoadContext loadCntx) throws Exception {
         String osmFile = engineConfig.getSourceFile();
-        ORSGraphHopperConfig args = createGHSettings(osmFile, config);
+        String dataAccessType = Strings.isNullOrEmpty(config.getGraphDataAccess()) ? engineConfig.getGraphsDataAccess() : config.getGraphDataAccess();
+        ORSGraphHopperConfig args = createGHSettings(osmFile, dataAccessType, config);
 
         int profileId;
         synchronized (lockObj) {
@@ -176,9 +178,9 @@ public class RoutingProfile {
         return gh;
     }
 
-    private static ORSGraphHopperConfig createGHSettings(String sourceFile, RouteProfileConfiguration config) {
+    private static ORSGraphHopperConfig createGHSettings(String sourceFile, String dataAccessType, RouteProfileConfiguration config) {
         ORSGraphHopperConfig ghConfig = new ORSGraphHopperConfig();
-        ghConfig.putObject("graph.dataaccess", "RAM_STORE");
+        ghConfig.putObject("graph.dataaccess", dataAccessType);
         ghConfig.putObject("datareader.file", sourceFile);
         ghConfig.putObject("graph.location", config.getGraphPath());
         ghConfig.putObject("graph.bytes_for_flags", config.getEncoderFlagsSize());
@@ -272,8 +274,6 @@ public class RoutingProfile {
             Config opts = config.getPreparationOpts();
             if (opts.hasPath("min_network_size"))
                 ghConfig.putObject("prepare.min_network_size", opts.getInt("min_network_size"));
-            if (opts.hasPath("min_one_way_network_size"))
-                ghConfig.putObject("prepare.min_one_way_network_size", opts.getInt("min_one_way_network_size"));
 
             if (opts.hasPath("methods")) {
                 if (opts.hasPath(ProfileTools.KEY_METHODS_CH)) {
@@ -372,9 +372,6 @@ public class RoutingProfile {
             Config opts = config.getExecutionOpts();
             if (opts.hasPath(ProfileTools.KEY_METHODS_CORE)) {
                 Config coreOpts = opts.getConfig(ProfileTools.KEY_METHODS_CORE);
-                if (coreOpts.hasPath(ProfileTools.KEY_DISABLING_ALLOWED))
-                    ghConfig.putObject("routing.core.disabling_allowed", coreOpts.getBoolean(ProfileTools.KEY_DISABLING_ALLOWED));
-
                 if (coreOpts.hasPath(ProfileTools.KEY_ACTIVE_LANDMARKS))
                     ghConfig.putObject("routing.corelm.active_landmarks", coreOpts.getInt(ProfileTools.KEY_ACTIVE_LANDMARKS));
             }
